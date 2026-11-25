@@ -1,0 +1,57 @@
+[project]
+name = "projeto-simone"
+version = "0.1.0"
+description = ""
+authors = [{ name = "Kyle Felipe", email = "kylefelipe@gmail.com" }]
+readme = "README.md"
+requires-python = ">=3.14, <4"
+dependencies = ["ollama (>=0.6.3,<0.7.0)", "python-dotenv (>=1.2.4,<2.0.0)"]
+[project.scripts]
+simone = "simone.cli:main"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{ include = "simone", from = "src" }]
+
+include = [
+  {path = "src/simone/prompts/*.md", format = ["sdist", "wheel"]}
+]
+
+[tool.poetry.group.dev.dependencies]
+envstencil = "^0.3.0"
+pytest = "^9.2.0"
+pytest-cov = "^7.1.0"
+ruff = "^0.17.3"
+taskipy = "^1.14.1"
+pytest-watch = "^4.2.0"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.coverage.run]
+branch =  true
+source = ["simone"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+
+[tool.ruff]
+line-length = 88
+target-version = "py314"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.taskipy.tasks]
+test = "pytest -v"
+coverage = "pytest --cov=simone --cov-report=term-missing"
+lint = "ruff check ."
+format = "ruff format ."
+check = "ruff check . && ruff format --check . && pytest"
+test-watch = "ptw --config pytest-watch.ini"
